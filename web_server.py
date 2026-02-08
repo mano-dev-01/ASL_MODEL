@@ -16,10 +16,12 @@ os.makedirs(DATA_DIR, exist_ok=True)
 def _write_header_if_needed(writer, file_exists):
     if file_exists:
         return
-    header = []
-    for i in range(21):
-        header += [f"x{i}", f"y{i}", f"z{i}"]
-    header.append("label")
+    header = ["label", "only_primary_hand"]
+    for hand in ("primary", "secondary"):
+        for i in range(21):
+            header += [f"{hand}_x{i}", f"{hand}_y{i}", f"{hand}_z{i}"]
+        for i in range(10):
+            header.append(f"{hand}_angle{i}")
     writer.writerow(header)
 
 
@@ -32,6 +34,7 @@ def index():
 def save_sample():
     data = request.get_json(silent=True) or {}
     features = data.get("features")
+    only_primary_hand = data.get("only_primary_hand")
     label = (data.get("label") or "").strip().upper()
     dataset = (data.get("dataset") or DEFAULT_DATASET_NAME).strip()
 
@@ -44,19 +47,22 @@ def save_sample():
 
     if not label:
         return jsonify(ok=False, error="label required"), 400
-    if not isinstance(features, list) or len(features) != 63:
-        return jsonify(ok=False, error="features must be length 63"), 400
+    if only_primary_hand not in (0, 1, "0", "1", True, False):
+        return jsonify(ok=False, error="only_primary_hand must be 0 or 1"), 400
+    if not isinstance(features, list) or len(features) != 146:
+        return jsonify(ok=False, error="features must be length 146"), 400
 
     try:
         features = [float(x) for x in features]
     except Exception:
         return jsonify(ok=False, error="features must be numeric"), 400
+    only_primary_hand = int(only_primary_hand)
 
     file_exists = os.path.isfile(data_file)
     with open(data_file, mode="a", newline="") as f:
         writer = csv.writer(f)
         _write_header_if_needed(writer, file_exists)
-        writer.writerow(features + [label])
+        writer.writerow([label, only_primary_hand] + features)
 
     return jsonify(ok=True)
 

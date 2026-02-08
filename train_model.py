@@ -3,7 +3,9 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
 from sklearn.metrics import classification_report
 import joblib
 
@@ -13,7 +15,7 @@ MODEL_DIR = os.path.join(BASE_DIR, "models")
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(MODEL_DIR, exist_ok=True)
 
-DATA_FILE = os.path.join(DATA_DIR, "ASL_ALPHABETS.csv")
+DATA_FILE = os.path.join(DATA_DIR, "dataset.csv")
 
 MODEL_NAME = sys.argv[1] if len(sys.argv) > 1 else "model.pkl"
 
@@ -30,7 +32,10 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # Create model
-model = LogisticRegression(max_iter=1000)
+model = make_pipeline(
+    StandardScaler(),
+    SVC(kernel="rbf", probability=True)
+)
 
 # Train
 model.fit(X_train, y_train)
