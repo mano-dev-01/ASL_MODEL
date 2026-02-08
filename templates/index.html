@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ASL Data Collector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">ASL Data Collector</p>
+          <h1>Capture clean hand skeletons fast.</h1>
+          <p class="subhead">Dataset names map directly to CSV files in your datasets folder.</p>
+        </div>
+        <div class="status-card">
+          <span>Status</span>
+          <strong id="status">Idle</strong>
+        </div>
+      </header>
+
+      <section class="camera-shell">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div class="camera-overlay">
+          <div class="pill">Camera</div>
+          <div class="pill">Skeleton Overlay</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="field">
+          <label for="dataset">Dataset Name</label>
+          <input id="dataset" value="dataset" />
+        </div>
+        <div class="field">
+          <label for="label">Label</label>
+          <input id="label" value="ENTER_LABEL" />
+        </div>
+        <div class="field">
+          <label for="samples">Samples</label>
+          <input id="samples" value="500" />
+        </div>
+        <div class="field">
+          <label for="wait">Wait (ms)</label>
+          <input id="wait" value="2000" />
+        </div>
+        <button id="start" class="primary">Start Recording</button>
+        <button id="stop" class="ghost">Stop</button>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
