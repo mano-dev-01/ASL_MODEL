@@ -66,24 +66,6 @@ def save_sample():
 
     return jsonify(ok=True)
 
-
-@app.route("/train", methods=["POST"])
-def train():
-    data = request.get_json(silent=True) or {}
-    model_name = (data.get("model_name") or "").strip()
-    if not model_name:
-        return jsonify(ok=False, error="model_name required"), 400
-
-    def _run():
-        try:
-            subprocess.run([sys.executable, "train_model.py", model_name], cwd=BASE_DIR)
-        except Exception:
-            pass
-
-    threading.Thread(target=_run, daemon=True).start()
-    return jsonify(ok=True, model_name=model_name)
-
-
 @app.route("/predict", methods=["POST"])
 def predict():
     def _run():
